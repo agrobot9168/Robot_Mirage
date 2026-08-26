@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.SwerveDrive.SwerveKinematics;
 import frc.robot.commands.Autos;
+import frc.robot.commands.CommandIntake;
 import frc.robot.commands.CommandTurret;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  public static LimelightHelpers limelightHelpers = new LimelightHelpers();
 
 
 
@@ -44,7 +46,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    turretSubsystem.setDefaultCommand(new CommandTurret());
+    // turretSubsystem.setDefaultCommand(new CommandTurret());
   }
 
   /**
@@ -66,6 +68,12 @@ public class RobotContainer {
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
     // m_driverController.a().onTrue(new Command(Commands.runOnce(()-> intakeSubsystem.SetVel_Colet(0.1))));
       // m_driverController.rightBumper().onTrue(new CommandTurret());
+
+      m_driverController.leftBumper().toggleOnTrue(new CommandIntake(-6, -0.6));
+      m_driverController.rightBumper().toggleOnTrue(new CommandIntake(0, 0));
+
+      m_driverController.rightTrigger().whileTrue(new CommandTurret());
+
     
   }
    private void activateCommandOnCondition(BooleanSupplier condition, Command command) {

@@ -16,7 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 public class IntakeSubsystem extends SubsystemBase{
 
     private final SparkMax mInclina;
-    // private final SparkMax mColeta;
+    private final SparkMax mColeta;
 
     private final SparkMaxConfig cfgInclina;
     private SparkClosedLoopController pidInclina;
@@ -24,11 +24,12 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public IntakeSubsystem() {
         mInclina = new SparkMax(14, MotorType.kBrushless);
-        // mColeta = new SparkMax(15, MotorType.kBrushless);
+        mColeta = new SparkMax(15, MotorType.kBrushless);
         cfgInclina = new SparkMaxConfig();
         pidInclina = mInclina.getClosedLoopController();
 
         SetReference();
+        CfgPid_Inclina(0.3);
     }
 
     public double GetPose_Inclina() {
@@ -37,16 +38,16 @@ public class IntakeSubsystem extends SubsystemBase{
     public void SetReference() {
         mInclina.getEncoder().setPosition(0);
     }
-    // public void SetVel_Colet(double vel) {
-    //     mColeta.set(vel);
-    // }
+    public void SetVel_Colet(double vel) {
+        mColeta.set(vel);
+    }
     public void CfgPid_Inclina(double kp) {
         cfgInclina.smartCurrentLimit(20);
         cfgInclina.inverted(false).idleMode(IdleMode.kBrake);
         cfgInclina.encoder.positionConversionFactor(1).velocityConversionFactor(1);
         cfgInclina.closedLoop
-        .pid(kp, 0, 0)
-        .outputRange(-0.1, 0.1);
+        .pid(kp, 0.0, 0.0)
+        .outputRange(-0.4, 0.4);
 
         mInclina.configure(cfgInclina, com.revrobotics.ResetMode.kResetSafeParameters, com.revrobotics.PersistMode.kNoPersistParameters);
         pidInclina = mInclina.getClosedLoopController();

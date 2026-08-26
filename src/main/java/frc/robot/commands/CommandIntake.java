@@ -7,13 +7,19 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class CommandIntake extends Command{
     private final IntakeSubsystem intake = RobotContainer.intakeSubsystem;
+    private double pose;
+    private double vel;
 
-    public CommandIntake() {
+    public CommandIntake(double pose, double vel) {
         addRequirements(intake);
+        this.pose = pose;
+        this.vel = vel;
+
     }
     @Override
     public void initialize() {
-
+        // intake.SetPose_Inclina(pose);
+        intake.SetVel_Colet(vel);
     }
     @Override
     public void execute() {
@@ -25,6 +31,6 @@ public class CommandIntake extends Command{
     }
     @Override
     public void end(boolean interrupted) {
-        
+
     }
 }

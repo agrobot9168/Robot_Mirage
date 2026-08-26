@@ -9,11 +9,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 
 public class TurretSubsystem extends SubsystemBase{
+    private String limelightaugust = "limelight-august";
     private double alvoRPS = 0.0;
+    private double angle;
+    private double shutter;
 
     private final TalonFX mShutter;
     private final VelocityVoltage pedidoVelocidade;
@@ -69,9 +74,42 @@ public class TurretSubsystem extends SubsystemBase{
         double result = (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         return result;
     }
+
+    public double Angle() {
+        return map(GetDistance(), 1, 3, -2, -7);
+    }
+    public double VelShutter() {
+        return map(GetDistance(), 1, 3, 1750, 2050);
+    }
+    public double GetDistance() {
+       
+
+        Pose3d target = LimelightHelpers.getTargetPose3d_RobotSpace(limelightaugust);
+        double z = target.getZ();
+
+        return z;
+    }
+    
     @Override
     public void periodic() {
+        Pose3d target = LimelightHelpers.getTargetPose3d_RobotSpace(limelightaugust);
+
+        double x = target.getX();
+        double z = target.getZ();
+        double y = target.getY();
+
+        SmartDashboard.putNumber("GetX", x);
+        SmartDashboard.putNumber("GetY", y);
+        SmartDashboard.putNumber("GetZ", z);
         SmartDashboard.putNumber("GetInclina_Shutter", GetPose_InclinaShutter());
+        SmartDashboard.putNumber("Seno", GetDistance());
+
+        SmartDashboard.putNumber("GetTX", LimelightHelpers.getTX(limelightaugust));
+        SmartDashboard.putNumber("GetTY", LimelightHelpers.getTY(limelightaugust));
+
+        SmartDashboard.putNumber("VelShutter", GetRPM_Shutter() * 60);
+
+
     }
 
 }

@@ -1,4 +1,6 @@
 package frc.robot.SwerveDrive;
+import frc.robot.LimelightHelpers;
+import frc.robot.SwerveDrive.AprilTagYaw;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 
@@ -6,6 +8,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveKinematics {
+        double kOmega = 0.2;
+        double valor = 0;
+        double omega;
+
+        private final AprilTagYaw aprilTagYaw =
+        new AprilTagYaw("limelightaugust");
+        private boolean aprilTagAlignment = false;
 
     private SwerveConfig swerveConfig = new SwerveConfig();
 
@@ -129,11 +138,66 @@ public class SwerveKinematics {
                         DEADBAND
                 );
 
-        double omega =
+        
+
+                if(swerveConfig.xboxController.getRightTriggerAxis() >= 0.1 &&
+                !LimelightHelpers.getTV("limelight-august")) {
+                        kOmega = 0.3;
+                                 omega =
+                MathUtil.applyDeadband(
+                        0.5 * kOmega,
+                        DEADBAND
+                ) * MAX_ANGULAR_SPEED;
+                } else if(swerveConfig.xboxController.getRightTriggerAxis() <0.1){
+                         omega =
                 MathUtil.applyDeadband(
                         swerveConfig.xboxController.getRightX(),
                         DEADBAND
                 ) * MAX_ANGULAR_SPEED;
+                }if(LimelightHelpers.getTV("limelight-august") &&
+                swerveConfig.xboxController.getRightTriggerAxis() >= 0.1) {
+                        if(LimelightHelpers.getTX("limelight-august") > 1 ||
+                           LimelightHelpers.getTX("limelight-august") < -1
+                           ){
+
+                                if((LimelightHelpers.getTX("limelight-august") < 20 &&
+                                LimelightHelpers.getTX("limelight-august") > 15) ||
+                                (LimelightHelpers.getTX("limelight-august") > -20 &&
+                                LimelightHelpers.getTX("limelight-august") < -15)) {
+                                        kOmega = 0.05;
+                                }
+                                if((LimelightHelpers.getTX("limelight-august") <= 15 &&
+                                LimelightHelpers.getTX("limelight-august") > 5) || 
+                                (LimelightHelpers.getTX("limelight-august") >= -15 &&
+                                LimelightHelpers.getTX("limelight-august") < -5)) {
+                                        kOmega = 0.02;
+                                }
+                         omega =
+                MathUtil.applyDeadband(
+                        kOmega * LimelightHelpers.getTX("limelight-august"),
+                        DEADBAND
+                ) * MAX_ANGULAR_SPEED;
+                }
+        }
+        // if(swerveConfig.xboxController.getRightTriggerAxis() >= 0.1) {
+        //         aprilTagAlignment = true;
+        // } else {
+        //         aprilTagAlignment = false;
+        // }
+        //         double omega;
+
+        // if (aprilTagAlignment) {
+
+        // omega = aprilTagYaw.getOmega();
+
+        // } else {
+
+        // omega =
+        //         MathUtil.applyDeadband(
+        //                 swerveConfig.xboxController.getRightX(),
+        //                 DEADBAND
+        //         ) * MAX_ANGULAR_SPEED;
+        // }
 
 
         // ========================================================

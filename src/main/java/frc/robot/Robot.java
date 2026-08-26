@@ -30,10 +30,10 @@ public class Robot extends TimedRobot {
   private final SwerveKinematics swerveAngle = new SwerveKinematics();
 
 
-  private SparkMax testeColet = new SparkMax(15, MotorType.kBrushless);
+  // private SparkMax testeColet = new SparkMax(15, MotorType.kBrushless);
   private final SparkMax testeIndexerNeo2 = new SparkMax(16, MotorType.kBrushless);
   private final SparkMax testeIndexerNeo1 = new SparkMax(19, MotorType.kBrushless);
-  private final TalonFX shutter = new TalonFX(20);
+  // private final TalonFX shutter = new TalonFX(20);
 
   private XboxController controller = new XboxController(0);
   // private TalonFXS Ang_BL = new TalonFXS(2);
@@ -113,35 +113,47 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(controller.getAButtonPressed()) {
-      testeColet.set(0);
-      testeIndexerNeo2.set(0);
-      testeIndexerNeo1.set(0);
-      shutter.set(0);
-    }
-    if(controller.getBButtonPressed()) {
-      testeColet.set(-0.6);
-      // testeIndexerNeo2.set(-1);
-      // testeIndexerNeo1.set(1);
-      // shutter.set(0.1);
 
-    }
-    if(controller.getXButtonPressed()) {
+
+    if(controller.getRightTriggerAxis() >= 0.2){
       testeIndexerNeo2.set(1);
       testeIndexerNeo1.set(-1);
-      shutter.set(0.4);
+    }else {
+      testeIndexerNeo2.set(0);
+      testeIndexerNeo1.set(0);
     }
-    if(controller.getYButtonPressed()) {
-      // testeIndexerNeo2.set(0);
-      // testeIndexerNeo1.set(0);
-      shutter.set(0.1);
-    }
-    if(controller.getLeftBumperButtonPressed()) {
-      shutter.set(-0.1);
 
-      // testeIndexerNeo2.set(0);
-      // testeIndexerNeo1.set(0);
-    }
+
+
+    // if(controller.getAButtonPressed()) {
+    //   // testeColet.set(0);
+    //   testeIndexerNeo2.set(0);
+    //   testeIndexerNeo1.set(0);
+    //   // shutter.set(0);
+    // }
+    // if(controller.getBButtonPressed()) {
+    //   // testeColet.set(-0.6);
+    //   // testeIndexerNeo2.set(-1);
+    //   // testeIndexerNeo1.set(1);
+    //   // shutter.set(0.1);
+
+    // }
+    // if(controller.getXButtonPressed()) {
+    //   // testeIndexerNeo2.set(1);
+    //   // testeIndexerNeo1.set(-1);
+    //   // shutter.set(0.4);
+    // }
+    // if(controller.getYButtonPressed()) {
+    //   // testeIndexerNeo2.set(0);
+    //   // testeIndexerNeo1.set(0);
+    //   // shutter.set(0.1);
+    // }
+    // if(controller.getLeftBumperButtonPressed()) {
+    //   shutter.set(-0.1);
+
+    //   // testeIndexerNeo2.set(0);
+    //   // testeIndexerNeo1.set(0);
+    // }
     // if(controller.getAButtonPressed()) {
     //   Ang_BR.set(0.1);
     //   Ang_BL.set(0.1);
