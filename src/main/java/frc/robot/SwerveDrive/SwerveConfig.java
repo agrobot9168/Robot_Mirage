@@ -5,6 +5,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,35 +34,53 @@ public class SwerveConfig {
     // MOTORES DE ANGLE
     // =========================
 
+    
     // 3 Minions = TalonFXS
-    public final TalonFXS motorBR = new TalonFXS(8);
-    public final TalonFXS motorFR = new TalonFXS(6);
-    public final TalonFXS motorBL = new TalonFXS(2);
-    public final TalonFXS motorIndex1 = new TalonFXS(19);
 
-    // Kraken X44
-    public final TalonFX motorFL = new TalonFX(4);
+    // public final TalonFXS motorBR = new TalonFXS(8);
+    // public final TalonFXS motorFR = new TalonFXS(6);
+    // public final TalonFXS motorBL = new TalonFXS(2);
+    // // public final TalonFXS motorIndex1 = new TalonFXS(19);
+
+    // // Kraken X44
+
+    // public final TalonFX motorFL = new TalonFX(4);
+
+    // MOTORS DRIVE 
+
+    // public final TalonFX drive_motorBR = new TalonFX(7);
+    // public final TalonFX drive_motorFR = new TalonFX(5);
+    // public final TalonFX drive_motorBL = new TalonFX(1);
+    // public final TalonFX drive_motorFL = new TalonFX(3);
+ 
+    //  MOTORS ANGLES SPARKMAX
+    public final SparkMax motorBR = new SparkMax(4, MotorType.kBrushless);
+    public final SparkMax motorFR = new SparkMax(3, MotorType.kBrushless);
+    public final SparkMax motorBL = new SparkMax(6, MotorType.kBrushless);
+    public final SparkMax motorFL = new SparkMax(5, MotorType.kBrushless);
+    //  MOTORS ANGLES SPARKMAX
 
     //MOTORS DRIVE 
-    public final TalonFX drive_motorBR = new TalonFX(7);
-    public final TalonFX drive_motorFR = new TalonFX(5);
-    public final TalonFX drive_motorBL = new TalonFX(1);
-    public final TalonFX drive_motorFL = new TalonFX(3);
+    public final SparkMax drive_motorBR = new SparkMax(1, MotorType.kBrushless); 
+    public final SparkMax drive_motorFR = new SparkMax(2, MotorType.kBrushless);
+    public final SparkMax drive_motorBL = new SparkMax(8, MotorType.kBrushless);
+    public final SparkMax drive_motorFL = new SparkMax(7, MotorType.kBrushless);
     //MOTORS DRIVE
+
     // OFFSETS DOS CANCODERS
-    public final double offsetFL = 277.29492187;
-    public final double offsetFR = 289.07226562;
-    public final double offsetBL = 276.06445312;
-    public final double offsetBR = 93.8671875;
+    public final double offsetFL = 240.55668;
+    public final double offsetFR = 115.13664;
+    public final double offsetBL = 225.08784;
+    public final double offsetBR = 148.88664;
 
     // =========================
     // CONTROLES
     // =========================
 
-    public final DutyCycleOut outputFL = new DutyCycleOut(0);
-    public final DutyCycleOut outputFR = new DutyCycleOut(0);
-    public final DutyCycleOut outputBL = new DutyCycleOut(0);
-    public final DutyCycleOut outputBR = new DutyCycleOut(0);
+    // public final DutyCycleOut outputFL = new DutyCycleOut(0);
+    // public final DutyCycleOut outputFR = new DutyCycleOut(0);
+    // public final DutyCycleOut outputBL = new DutyCycleOut(0);
+    // public final DutyCycleOut outputBR = new DutyCycleOut(0);
 
     // kP inicial
     public final PIDController pidFL = new PIDController(0.01, 0, 0);

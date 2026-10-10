@@ -4,9 +4,16 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -31,11 +38,17 @@ public class Robot extends TimedRobot {
 
 
   // private SparkMax testeColet = new SparkMax(15, MotorType.kBrushless);
-  private final SparkMax testeIndexerNeo2 = new SparkMax(16, MotorType.kBrushless);
-  private final SparkMax testeIndexerNeo1 = new SparkMax(19, MotorType.kBrushless);
-  // private final TalonFX shutter = new TalonFX(20);
+  // private final SparkMax testeIndexerNeo2 = new SparkMax(16, MotorType.kBrushless);
+  // private final SparkMax testeIndexerNeo1 = new SparkMax(19, MotorType.kBrushless);
+  // // private final TalonFX shutter = new TalonFX(20);
 
-  private XboxController controller = new XboxController(0);
+  // private final TalonFX shutter = new TalonFX(17);
+  // private final TalonFXConfiguration cfgSutter = new TalonFXConfiguration();
+  // private PositionDutyCycle pidShutter = new PositionDutyCycle(0);
+  // private final VelocityVoltage pedidoVelocidade = new VelocityVoltage(0).withSlot(0);
+  // private double alvoRPS = 0;
+
+  // private XboxController controller = new XboxController(0);
   // private TalonFXS Ang_BL = new TalonFXS(2);
   // private TalonFXS Ang_FR = new TalonFXS(6);
   // private TalonFXS Ang_BR = new TalonFXS(8);
@@ -74,6 +87,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     swerveAngle.periodic();
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -107,21 +121,68 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    
+    // cfgmIntake(1, -0.2, 0.2, NeutralModeValue.Brake);
   }
+  // private void SetRPM_Shutter(double setRPM) {
+  //       this.alvoRPS = setRPM / 60.0;
+  //       double meuKv = 0.115;
+  //       double VoltagemFeedForward = this.alvoRPS * meuKv;
+  //       shutter.setControl(pedidoVelocidade.withVelocity(alvoRPS).withFeedForward(VoltagemFeedForward));
+  //   }
+  //  private void cfgmIntake(double KP, double OutMin,double OutMax, NeutralModeValue kmode) {
+    
+  //           cfgSutter.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+  //           cfgSutter.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = 0.5;
+  //           cfgSutter.MotorOutput.NeutralMode = kmode;
+  //           cfgSutter.CurrentLimits.SupplyCurrentLimit = 40;
+  //           cfgSutter.CurrentLimits.StatorCurrentLimitEnable = true;
+  //           cfgSutter.Audio.BeepOnConfig = true;
+  //           cfgSutter.MotorOutput.PeakForwardDutyCycle = OutMax;
+  //           cfgSutter.MotorOutput.PeakReverseDutyCycle = OutMin;
+  //           cfgSutter.Voltage.PeakForwardVoltage = 12;
+  //           cfgSutter.Voltage.PeakReverseVoltage = -12;
+    
+  //           Slot0Configs slot0 = cfgSutter.Slot0;
+  //           slot0.kP = KP;
+  //           slot0.kI = 0.0;
+  //           slot0.kD = 0.0;
+    
+  //           shutter.getConfigurator().apply(cfgSutter);
+  //       }
+  //       private void setPoint_Intake(double position) {
+  //           shutter.setControl(pidShutter.withPosition(position));
+  //   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
 
-    if(controller.getRightTriggerAxis() >= 0.2){
-      testeIndexerNeo2.set(1);
-      testeIndexerNeo1.set(-1);
-    }else {
-      testeIndexerNeo2.set(0);
-      testeIndexerNeo1.set(0);
-    }
+    // if(controller.getRightTriggerAxis() >= 0.2 && controller.getLeftTriggerAxis() < 0.2){
+    //   testeIndexerNeo2.set(1);
+    //   testeIndexerNeo1.set(-1);
+    // }else if(controller.getLeftTriggerAxis() >= 0.2 && controller.getRightTriggerAxis() < 0.2){
+    //   testeIndexerNeo2.set(-1);
+    //   testeIndexerNeo1.set(1);
+    // } else{
+    //   testeIndexerNeo2.set(0);
+    //   testeIndexerNeo1.set(0);
+    // }
+    // if(controller.getAButtonPressed()) {
+    //   SetRPM_Shutter(6000);
+    // }
+    // if(controller.getBButtonPressed()) {
+    //   SetRPM_Shutter(-6000);
+    // }
+    // if(controller.getXButtonPressed()) {
+    //   shutter.set(0);
+    // }
+    // if(controller.getRightBumperPressed()) {
+    //   setPoint_Intake(30);
+    // } else if(controller.getLeftBumperPressed()) {
+    //   setPoint_Intake(-30);
+    // }
+
 
 
 

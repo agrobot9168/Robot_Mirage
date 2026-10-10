@@ -6,7 +6,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class CommandIntake extends Command{
-    private final IntakeSubsystem intake = RobotContainer.intakeSubsystem;
+    private final IntakeSubsystem intake = new IntakeSubsystem();
     private double pose;
     private double vel;
 
@@ -18,12 +18,15 @@ public class CommandIntake extends Command{
     }
     @Override
     public void initialize() {
-        // intake.SetPose_Inclina(pose);
-        intake.SetVel_Colet(vel);
+
+        
+        intake.SetPose_Inclina(pose);
+
     }
     @Override
     public void execute() {
         SmartDashboard.putNumber("GETPosition_", intake.GetPose_Inclina());
+        intake.SetVel_Colet(vel);
     }
     @Override
     public boolean isFinished() {
@@ -31,6 +34,7 @@ public class CommandIntake extends Command{
     }
     @Override
     public void end(boolean interrupted) {
-
+        intake.SetVel_Colet(0);
+        intake.SetPose_Inclina(5);
     }
 }

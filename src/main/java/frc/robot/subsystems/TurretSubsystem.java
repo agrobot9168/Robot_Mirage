@@ -76,12 +76,13 @@ public class TurretSubsystem extends SubsystemBase{
     }
 
     public double Angle() {
-        return map(GetDistance(), 1, 3, -2, -7);
+        return map(GetDistance(), 0.9, 4.373466902988498, -2.5, -7);
     }
     public double VelShutter() {
-        return map(GetDistance(), 1, 3, 1750, 2050);
+        return map(GetDistance(), 0.9, 4.373466902988498, 1900, 2800);
     }
     public double GetDistance() {
+       
        
 
         Pose3d target = LimelightHelpers.getTargetPose3d_RobotSpace(limelightaugust);
@@ -92,6 +93,7 @@ public class TurretSubsystem extends SubsystemBase{
     
     @Override
     public void periodic() {
+
         Pose3d target = LimelightHelpers.getTargetPose3d_RobotSpace(limelightaugust);
 
         double x = target.getX();
@@ -102,14 +104,12 @@ public class TurretSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("GetY", y);
         SmartDashboard.putNumber("GetZ", z);
         SmartDashboard.putNumber("GetInclina_Shutter", GetPose_InclinaShutter());
-        SmartDashboard.putNumber("Seno", GetDistance());
+        SmartDashboard.putNumber("Distance", GetDistance());
 
         SmartDashboard.putNumber("GetTX", LimelightHelpers.getTX(limelightaugust));
         SmartDashboard.putNumber("GetTY", LimelightHelpers.getTY(limelightaugust));
 
         SmartDashboard.putNumber("VelShutter", GetRPM_Shutter() * 60);
-
-
+        
     }
-
 }

@@ -5,6 +5,7 @@ import frc.robot.SwerveDrive.AprilTagYaw;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveKinematics {
@@ -16,7 +17,14 @@ public class SwerveKinematics {
         new AprilTagYaw("limelightaugust");
         private boolean aprilTagAlignment = false;
 
+        private PIDController pidLateral = new PIDController(0.03, 0, 0);
+        private PIDController pidFrontal = new PIDController(0.5, 0, 0);
+
+        private PIDController pidYaw = new PIDController(0.04, 0, 0);
+
     private SwerveConfig swerveConfig = new SwerveConfig();
+
+    
 
     // ============================================================
     // GEOMETRIA DO ROBÔ
@@ -29,20 +37,20 @@ public class SwerveKinematics {
     //             FL          FR
     //              \          /
     //               \  ROBÔ  /
-    //              /          \
+    //              /         \
     //             BL          BR
     //
     // X = frente / trás
     // Y = esquerda / direita
 
-    private static final double L = 0.35;
-    private static final double W = 0.25;
+    private static final double L = 0.28128;
+    private static final double W = 0.28128;
 
     // ============================================================
     // CONFIGURAÇÕES
     // ============================================================
 
-    private static final double DEADBAND = 0.05;
+    private static final double DEADBAND = 0.1;
 
     // Velocidade angular máxima
     private static final double MAX_ANGULAR_SPEED = 1.0;
@@ -75,6 +83,9 @@ public class SwerveKinematics {
         swerveConfig.pidFR.enableContinuousInput(0, 360);
         swerveConfig.pidBL.enableContinuousInput(0, 360);
         swerveConfig.pidBR.enableContinuousInput(0, 360);
+
+        pidYaw.enableContinuousInput(-180, 180);
+        pidYaw.setTolerance(2.0);
 
         // ========================================================
         // TOLERÂNCIA
@@ -113,8 +124,71 @@ public class SwerveKinematics {
     // ============================================================
     // PERIODIC
     // ============================================================
+        //where I am modification
+        double vx = 0;
+        double vy = 0;
+        boolean giro = false;
+        boolean condition, condition2 = false;
+
+        double zeroYaw = pigeon();
+        
+        
+        double altTag = 0.40315;
+        double altCam = 0.523;
+
+        double deltaAlt = altTag - altCam;
+        double distance = 0;
+
+        
+        
+
+        double distanceDesejada = 0;
+        //where I am modification
 
     public void periodic() {
+        vx = 0.0;
+        vy = 0.0;
+        omega = 0.0;
+
+
+        SmartDashboard.putNumber("DISTANCE", Distance());
+                                //where I am modification
+        
+        double Yaw = pigeon();
+
+        if(swerveConfig.xboxController.getAButtonPressed()) {
+                condition = !condition;
+                condition2 = false;
+        }
+
+        if(swerveConfig.xboxController.getBButtonPressed()) {
+                vx = 0.0;
+                vy = 0.0;
+                condition2 = !condition2;
+                condition = false;
+                pidYaw.reset();
+        }
+
+        if(swerveConfig.xboxController.getStartButtonPressed()){
+                zeroYaw = pigeon();
+                pidYaw.reset();         
+        }
+        SmartDashboard.putBoolean("CONDITION", condition);
+        SmartDashboard.putBoolean("CONDITION2", condition2);
+
+        if(condition2){
+                double Yawtarget = MathUtil.inputModulus(zeroYaw + 180, -180, 180);
+                omega = pidYaw.calculate(Yaw, Yawtarget);
+                omega = MathUtil.clamp(omega, -0.2, 0.2);
+        
+                if(pidYaw.atSetpoint()) {
+                        omega = 0;
+                        condition2 = false;
+                        pidYaw.reset(); 
+                }
+        }
+        
+                                //where I am modification
 
         // ========================================================
         // JOYSTICK
@@ -126,13 +200,15 @@ public class SwerveKinematics {
          * RIGHT X -> OMEGA
          */
 
-        double vx =
+        
+                if(condition) {
+                vx =
                 MathUtil.applyDeadband(
                         swerveConfig.xboxController.getLeftY(),
                         DEADBAND
                 );
 
-        double vy =
+                vy =
                 MathUtil.applyDeadband(
                         swerveConfig.xboxController.getLeftX(),
                         DEADBAND
@@ -142,7 +218,6 @@ public class SwerveKinematics {
 
                 if(swerveConfig.xboxController.getRightTriggerAxis() >= 0.1 &&
                 !LimelightHelpers.getTV("limelight-august")) {
-                        kOmega = 0.3;
                                  omega =
                 MathUtil.applyDeadband(
                         0.5 * kOmega,
@@ -179,6 +254,37 @@ public class SwerveKinematics {
                 ) * MAX_ANGULAR_SPEED;
                 }
         }
+
+                } else {
+                        vx = 0;
+                        vy = 0;
+                }
+        //         else if(false) {
+        //                 //where I am modification
+        // omega = 0;
+        // double TxCam = LimelightHelpers.getTX("limelight-august");
+
+        // double distanceLateral =
+        // Distance() * Math.sin(Math.toRadians(TxCam));
+
+        // double distanceFrontal =
+        // Distance() * Math.cos(Math.toRadians(TxCam));
+
+        // //PID Lateral
+        //         vy = pidLateral.calculate(distanceLateral, 0);
+        // //PID Frontal
+        //         vx = pidFrontal.calculate(distanceFrontal, distanceDesejada);
+
+        // //Vel Limit
+        //         vy = MathUtil.clamp(vy, -0.5, 0.5);
+        //         vx = MathUtil.clamp(vx, -0.5, 0.5);
+
+
+        
+        //                 //where I am modification
+        //         }
+                
+                
         // if(swerveConfig.xboxController.getRightTriggerAxis() >= 0.1) {
         //         aprilTagAlignment = true;
         // } else {
@@ -222,6 +328,14 @@ public class SwerveKinematics {
         // ========================================================
         // FRONT LEFT
         // ========================================================
+
+        //Invert
+        // vx = vx * -1;
+        // vy = vy * -1;
+        omega = omega * -1;
+        //Invert
+
+
 
         double flVx =
                 vx - omega * W;
@@ -493,36 +607,43 @@ public class SwerveKinematics {
         // MOTORES DE ANGLE
         // ========================================================
 
-        swerveConfig.motorFL.setControl(
-                swerveConfig.outputFL.withOutput(
-                        outputFLValue
-                )
-        );
+        // swerveConfig.motorFL.setControl(
+        //         swerveConfig.outputFL.withOutput(
+        //                 outputFLValue
+        //         )
+        // );
 
-        swerveConfig.motorFR.setControl(
-                swerveConfig.outputFR.withOutput(
-                        outputFRValue
-                )
-        );
+        // swerveConfig.motorFR.setControl(
+        //         swerveConfig.outputFR.withOutput(
+        //                 outputFRValue
+        //         )
+        // );
 
-        swerveConfig.motorBL.setControl(
-                swerveConfig.outputBL.withOutput(
-                        outputBLValue
-                )
-        );
+        // swerveConfig.motorBL.setControl(
+        //         swerveConfig.outputBL.withOutput(
+        //                 outputBLValue
+        //         )
+        // );
 
-        swerveConfig.motorBR.setControl(
-                swerveConfig.outputBR.withOutput(
-                        outputBRValue
-                )
-        );
+        // swerveConfig.motorBR.setControl(
+        //         swerveConfig.outputBR.withOutput(
+        //                 outputBRValue
+        //         )
+        // );
 
+        swerveConfig.motorFL.set(outputFLValue);
+
+        swerveConfig.motorFR.set(outputFRValue);
+
+        swerveConfig.motorBL.set(outputBLValue);
+
+        swerveConfig.motorBR.set(outputBRValue);
 
         // ========================================================
         // MOTORES DE DRIVE
         // ========================================================
 
-        swerveConfig.drive_motorFL.set(speedFL);
+        swerveConfig.drive_motorFL.set(speedFL * -1);
         swerveConfig.drive_motorFR.set(speedFR);
         swerveConfig.drive_motorBL.set(speedBL);
         swerveConfig.drive_motorBR.set(speedBR);
@@ -615,7 +736,7 @@ public class SwerveKinematics {
                 "Pigeon2",
                 swerveConfig.pigeon2
                         .getYaw()
-                        .getValueAsDouble() * 360
+                        .getValueAsDouble()
         );
     }
 
@@ -644,5 +765,12 @@ public class SwerveKinematics {
                 0,
                 360
         );
+    }
+    double pigeon() {
+        return swerveConfig.pigeon2.getYaw().getValueAsDouble();
+    }
+    double Distance() {
+        double TyCam = LimelightHelpers.getTY("limelight-august");
+        return distance = deltaAlt / Math.tan(Math.toDegrees(TyCam));
     }
 }

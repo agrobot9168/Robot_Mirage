@@ -7,8 +7,8 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.SwerveDrive.SwerveKinematics;
 import frc.robot.commands.Autos;
-import frc.robot.commands.CommandIntake;
-import frc.robot.commands.CommandTurret;
+// import frc.robot.commands.CommandIntake;
+// import frc.robot.commands.CommandTurret;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -34,8 +34,8 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-  public static TurretSubsystem turretSubsystem = new TurretSubsystem();
+  // public static IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  // public static TurretSubsystem turretSubsystem = new TurretSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -69,10 +69,10 @@ public class RobotContainer {
     // m_driverController.a().onTrue(new Command(Commands.runOnce(()-> intakeSubsystem.SetVel_Colet(0.1))));
       // m_driverController.rightBumper().onTrue(new CommandTurret());
 
-      m_driverController.leftBumper().toggleOnTrue(new CommandIntake(-6, -0.6));
-      m_driverController.rightBumper().toggleOnTrue(new CommandIntake(0, 0));
 
-      m_driverController.rightTrigger().whileTrue(new CommandTurret());
+      // m_driverController.rightBumper().toggleOnTrue(new CommandIntake(-10, 1));
+      // m_driverController.rightTrigger().whileTrue(new CommandTurret());
+      
 
     
   }

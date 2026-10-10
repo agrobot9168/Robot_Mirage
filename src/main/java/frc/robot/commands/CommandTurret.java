@@ -15,7 +15,7 @@ public class CommandTurret extends Command{
     double shutter;
 
 
-    private TurretSubsystem turret = RobotContainer.turretSubsystem;
+    private TurretSubsystem turret = new TurretSubsystem();
     private XboxController xbox = new XboxController(0);
 
     public CommandTurret() {
@@ -24,7 +24,7 @@ public class CommandTurret extends Command{
 
     @Override
     public void initialize() {
-
+        turret.SetRPM_Shutter(1600);
     }
     @Override
     public void execute() {
@@ -39,6 +39,7 @@ public class CommandTurret extends Command{
 
         turret.SetPose_Inclina(turret.Angle());
         turret.SetRPM_Shutter(turret.VelShutter());
+        
 
 
         SmartDashboard.putBoolean("GetTV", limelight.getTV(limelightaugust));
@@ -50,8 +51,8 @@ public class CommandTurret extends Command{
     }
     @Override
     public void end(boolean interrupted) {
+        turret.SetRPM_Shutter(1600);
         turret.SetPose_Inclina(0);
-        turret.SetRPM_Shutter(0);
     }
     
 }
