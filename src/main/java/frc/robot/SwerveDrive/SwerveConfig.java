@@ -12,7 +12,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class SwerveConfig {
-    public final XboxController xboxController =new XboxController(0);
     // =========================
     // Pigeon2.0
     // =========================

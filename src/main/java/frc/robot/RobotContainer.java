@@ -28,7 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  public static LimelightHelpers limelightHelpers = new LimelightHelpers();
+   public final GarraConfig garraconfig = new GarraConfig();
+  
+
+
+ // public static LimelightHelpers limelightHelpers = new LimelightHelpers();
 
 
 

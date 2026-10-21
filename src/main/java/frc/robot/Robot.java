@@ -48,8 +48,9 @@ public class Robot extends TimedRobot {
   // private final VelocityVoltage pedidoVelocidade = new VelocityVoltage(0).withSlot(0);
   // private double alvoRPS = 0;
 
-  // private XboxController controller = new XboxController(0);
-  // private TalonFXS Ang_BL = new TalonFXS(2);
+  private XboxController controller = new XboxController(0);
+  private TalonFXS ola = new TalonFXS(14);
+
   // private TalonFXS Ang_FR = new TalonFXS(6);
   // private TalonFXS Ang_BR = new TalonFXS(8);
   // private TalonFX Ang_FL = new TalonFX(4);
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     swerveAngle.periodic();
+    //swerveAngle.PrintsSwerveKnematics();
 
   }
 
@@ -182,7 +184,17 @@ public class Robot extends TimedRobot {
     // } else if(controller.getLeftBumperPressed()) {
     //   setPoint_Intake(-30);
     // }
+    // if(controller.getAButtonPressed()) {
+    //   ola.set(0.4);
+    //  }
 
+    //  if(controller.getBButtonPressed()) {
+    //    ola.set(-0.8);
+    //  }
+
+    // if(controller.getXButtonPressed()) {
+    //    ola.set(0.0);
+    // }
 
 
 
@@ -216,7 +228,7 @@ public class Robot extends TimedRobot {
     //   // testeIndexerNeo1.set(0);
     // }
     // if(controller.getAButtonPressed()) {
-    //   Ang_BR.set(0.1);
+    //   Ang_BR.set(0.1); }
     //   Ang_BL.set(0.1);
     //   Ang_FR.set(0.1);
     //   Ang_FL.set(0.1);

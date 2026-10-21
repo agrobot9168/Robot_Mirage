@@ -9,7 +9,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.TurretSubsystem;
 
 public class CommandTurret extends Command{
-    private LimelightHelpers limelight = RobotContainer.limelightHelpers;
+   // private LimelightHelpers limelight = RobotContainer.limelightHelpers;
     private String limelightaugust = "limelight-august";
     double angle;
     double shutter;
@@ -42,7 +42,7 @@ public class CommandTurret extends Command{
         
 
 
-        SmartDashboard.putBoolean("GetTV", limelight.getTV(limelightaugust));
+        //SmartDashboard.putBoolean("GetTV", limelight.getTV(limelightaugust));
 
     }
     @Override
