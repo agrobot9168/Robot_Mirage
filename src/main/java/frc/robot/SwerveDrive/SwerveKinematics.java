@@ -12,7 +12,6 @@ import frc.robot.XboxControls;
 public class SwerveKinematics {
 private TalonFXS motor = new TalonFXS(14);
 
-
     private SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
     //private final GarraConfig motor = new GarraConfig();
@@ -585,7 +584,7 @@ private TalonFXS motor = new TalonFXS(14);
         // MOTORES DE DRIVE
         // ========================================================
 
-        swerveConfig.drive_motorFL.set(speedFL * -1);
+        swerveConfig.drive_motorFL.set(speedFL);
         swerveConfig.drive_motorFR.set(speedFR);
         swerveConfig.drive_motorBL.set(speedBL);
         swerveConfig.drive_motorBR.set(speedBR);
@@ -743,20 +742,21 @@ private TalonFXS motor = new TalonFXS(14);
 
 }
 
-public SwerveKinematics Garrateste() {
+//public SwerveKinematics Garrateste() {
         
-     if(controls.Get_Abutton()) {
-      motor.set(0.3);
-     }
+    // if(controls.Get_Abutton()) {
+     // motor.set(0.3);
+    // }
+
 
      //if(controls.getBButtonPressed()) {
       // motorGarra.set(-0.8);
     //}
 
-    else {
-       motor.set(0.0);
-    }
-}
+    //else {
+    //  motor.set(0.0);
+  // }
+//}
 
 
 

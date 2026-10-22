@@ -43,7 +43,7 @@ public class SwerveConfig {
 
     // // Kraken X44
 
-    // public final TalonFX motorFL = new TalonFX(4);
+    
 
     // MOTORS DRIVE 
 
@@ -72,7 +72,7 @@ public class SwerveConfig {
     public final double offsetBL = 225.08784;
     public final double offsetBR = 148.88664;
 
-    // =========================
+    //========================
     // CONTROLES
     // =========================
 

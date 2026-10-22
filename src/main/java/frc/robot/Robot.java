@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
   private final SwerveKinematics swerveAngle = new SwerveKinematics();
+ // private final SwerveKinematics motorteste = new SwerveKinematics().Garrateste();
 
 
   // private SparkMax testeColet = new SparkMax(15, MotorType.kBrushless);
@@ -49,7 +50,7 @@ public class Robot extends TimedRobot {
   // private double alvoRPS = 0;
 
   private XboxController controller = new XboxController(0);
-  private TalonFXS ola = new TalonFXS(14);
+
 
   // private TalonFXS Ang_FR = new TalonFXS(6);
   // private TalonFXS Ang_BR = new TalonFXS(8);

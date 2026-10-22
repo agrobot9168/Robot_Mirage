@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-   public final GarraConfig garraconfig = new GarraConfig();
+  private final Garra garra = new Garra();
   
 
 
@@ -63,6 +63,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    m_driverController.rightTrigger().whileTrue( 
+    Commands.startEnd(
+    () -> garra.setMotor(m_driverController.getRightTriggerAxis()),
+    () -> garra.stopMotor(), garra
+    )
+    );
+    // m_driverController.getRightTriggerAxis().whileTrue(new Command(Commands.runOnce(() -> garra.setMotor())));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));

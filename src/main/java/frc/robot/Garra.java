@@ -4,13 +4,28 @@
    import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
   public class Garra extends SubsystemBase {
+
      private final GarraConfig garraConfig = new GarraConfig();
      
-@Override
-  public void periodic() {
-     Double corrente = garraConfig.getCurrent();
-      
-       SmartDashboard.putNumber("CORRENTE", corrente);
-       }
-    
+    public void setMotor(double velocidade) {
+    garraConfig.setMotor(velocidade);
   }
+    public void stopMotor() {
+      garraConfig.stopMotor();
+  }
+
+@Override
+
+public void periodic() {
+  double corrente = garraConfig.getCurrent();
+  double correcao = garraConfig.calcularCorrecaoCorrente();
+
+  SmartDashboard.putNumber("CORRECAO",  correcao);
+
+  SmartDashboard.putNumber("CORRENTE MOTOR FXS", corrente);
+
+    }
+  
+  }
+  
+    
