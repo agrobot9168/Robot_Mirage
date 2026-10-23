@@ -3,6 +3,8 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,8 +14,16 @@ import frc.robot.XboxControls;
 public class SwerveKinematics {
 private TalonFXS motor = new TalonFXS(14);
 
+        private SparkClosedLoopController controladorFL;
+        private RelativeEncoder encoderFL;
+
     private SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
+    private final ContollerPosition contollerPositionFL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFL);
+    private final ContollerPosition contollerPositionFR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFR);
+    private final ContollerPosition contollerPositionBL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBL);
+    private final ContollerPosition contollerPositionBR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBR);
+    
     //private final GarraConfig motor = new GarraConfig();
 
     // Posição dos módulos em relação ao centro do robô
@@ -146,13 +156,28 @@ private TalonFXS motor = new TalonFXS(14);
         private double p_vx, p_vy, p_omega, p_targetAngleFl, p_targetAngleFR, p_targetAngleBR, p_targetAngleBL,
                        p_speedFL, p_speedFR, p_speedBL, p_speedBR, p_angleFL, p_angleFR, p_angleBL, p_angleBR = 0;
                 //FOR PRINTS
-
+        boolean testes = false;
     // PERIODIC
     public void periodic() {
 
         if(controls.Get_Start()) {
                 zeroYaw = pigeon();
         }
+
+        if(controls.Get_Abutton()) testes = !testes;
+        if(testes) {
+                contollerPositionFL.setMPSAlternative(4.9);
+                contollerPositionFR.setMPSAlternative(4.9);
+                contollerPositionBL.setMPS(4.9);
+                contollerPositionBR.setMPS(4.9);
+        } else {
+                contollerPositionFL.setMPSAlternative(0);
+                contollerPositionFR.setMPSAlternative(0);
+                contollerPositionBL.setMPS(0);
+                contollerPositionBR.setMPS(0);
+        }
+
+        
 
         vx = 0.0;
         vy = 0.0;
@@ -572,6 +597,10 @@ private TalonFXS motor = new TalonFXS(14);
         //         )
         // );
 
+
+
+
+
         swerveConfig.motorFL.set(outputFLValue);
 
         swerveConfig.motorFR.set(outputFRValue);
@@ -580,14 +609,20 @@ private TalonFXS motor = new TalonFXS(14);
 
         swerveConfig.motorBR.set(outputBRValue);
 
+
+
+
+
+
+
         // ========================================================
         // MOTORES DE DRIVE
         // ========================================================
 
-        swerveConfig.drive_motorFL.set(speedFL);
-        swerveConfig.drive_motorFR.set(speedFR);
-        swerveConfig.drive_motorBL.set(speedBL);
-        swerveConfig.drive_motorBR.set(speedBR);
+        // swerveConfig.drive_motorFL.set(speedFL);
+        // swerveConfig.drive_motorFR.set(speedFR);
+        // swerveConfig.drive_motorBL.set(speedBL);
+        // swerveConfig.drive_motorBR.set(speedBR);
 
 
         // ========================================================
@@ -654,6 +689,12 @@ private TalonFXS motor = new TalonFXS(14);
     
 
     public void PrintsSwerveKnematics() {
+        SmartDashboard.putNumber("RPS/FL", contollerPositionFL.getMPS());
+        SmartDashboard.putNumber("RPS/FR", contollerPositionFR.getMPS());
+        SmartDashboard.putNumber("RPS/BL", contollerPositionBL.getMPS());
+        SmartDashboard.putNumber("RPS/BR", contollerPositionBR.getMPS());
+
+
                         SmartDashboard.putNumber(
                 "VX",
                 p_vx
