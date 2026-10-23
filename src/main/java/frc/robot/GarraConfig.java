@@ -27,7 +27,6 @@ import edu.wpi.first.math.MathUtil;
        motorGarra.getConfigurator().apply(configs); 
       }
 
-
       public void setMotor(double velocidade) {
            motorGarra.set(velocidade);
        }

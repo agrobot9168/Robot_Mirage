@@ -14,6 +14,9 @@ public class SwerveKinematics {
 
     private SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
+
+    private final AprilTagYaw aprilTagYaw = new AprilTagYaw("limelight");
+
     //private final GarraConfig motor = new GarraConfig();
 
     // Posição dos módulos em relação ao centro do robô
@@ -138,6 +141,9 @@ public class SwerveKinematics {
 
         double distanceDesejada = 0;
 
+        // april tag teste 01 
+        boolean alinhamentoApriltag = false;
+
         boolean driveRobotOriented = false;
         boolean driveFieldOriented = true;
                 //VÁRIAVEIS
@@ -149,6 +155,9 @@ public class SwerveKinematics {
 
     // PERIODIC
     public void periodic() {
+
+        SmartDashboard.putBoolean("Apriltag Detectada", aprilTagYaw.hasTarget());
+        SmartDashboard.putNumber("Apriltag TX", aprilTagYaw.getTX());
 
         if(controls.Get_Start()) {
                 zeroYaw = pigeon();
@@ -168,7 +177,16 @@ public class SwerveKinematics {
         //  * LEFT X  -> VY
         //  * RIGHT X -> OMEGA
         //  */
-                if(driveFieldOriented){
+                if(driveFieldOriented) {
+
+                if (alinhamentoApriltag) {
+                        omega = aprilTagYaw.getOmega();
+                } else{
+                        omega = MathUtil.applyDeadband( controls.Get_LeftX(),DEADBAND)
+                         * MAX_ANGULAR_SPEED;
+                }
+                
+
                 vx =
                 MathUtil.applyDeadband(
                         controls.Get_LeftY(),
