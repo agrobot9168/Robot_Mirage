@@ -10,7 +10,7 @@ import frc.robot.GarraConfig;
 import frc.robot.XboxControls;
 
 public class SwerveKinematics {
-private TalonFXS motor = new TalonFXS(14);
+    private TalonFXS motor = new TalonFXS(14);
 
     private SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
