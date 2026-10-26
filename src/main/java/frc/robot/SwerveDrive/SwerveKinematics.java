@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.GarraConfig;
 import frc.robot.LimelightHelpers;
 import frc.robot.XboxControls;
+import frc.robot.LimelightHelpers.LimelightResults;
 
 public class SwerveKinematics {
     private TalonFXS motor = new TalonFXS(14);
@@ -162,6 +163,7 @@ public class SwerveKinematics {
         SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY("limelight"));
         SmartDashboard.putNumber("DISTANCE (m)", Distance());
 
+
         if(controls.Get_Start()) {
                 zeroYaw = pigeon();
         }
@@ -169,6 +171,8 @@ public class SwerveKinematics {
         vx = 0.0;
         vy = 0.0;
         omega = 0.0;
+
+        alinhamentoApriltag = controls.Get_RightBumper();
 
 
         // // ========================================================
@@ -183,12 +187,17 @@ public class SwerveKinematics {
                 if(driveFieldOriented) {
 
                 if (alinhamentoApriltag) {
-                        omega = aprilTagYaw.getOmega();
-                } else{
-                        omega = MathUtil.applyDeadband( controls.Get_LeftX(),DEADBAND)
-                         * MAX_ANGULAR_SPEED;
+
+                        if (aprilTagYaw.hasTarget()) {
+                                omega = aprilTagYaw.getOmega();
+                        } else {
+                                omega = 0.0;
+                        }
+                } else {
+                        omega = MathUtil.applyDeadband(
+                                controls.Get_RightX(), DEADBAND 
+                        ) * MAX_ANGULAR_SPEED;
                 }
-                
 
                 vx =
                 MathUtil.applyDeadband(
@@ -201,11 +210,6 @@ public class SwerveKinematics {
                         controls.Get_LeftX(),
                         DEADBAND
                 );
-                omega =
-                MathUtil.applyDeadband(
-                        controls.Get_RightX(),
-                        DEADBAND
-                ) * MAX_ANGULAR_SPEED;
                 
 
 		double[] velocidades = DriveFieldOriented(vx, vy, omega);
@@ -650,7 +654,8 @@ if (Math.abs(Math.tan(anguloTotal))< 0.001){
 }
  
 distance = deltaAlt / Math.tan(anguloTotal);
-
+ 
+// calibracao teste de distancia
 distance = 1.0222 * distance - 0.1497;
 
 return distance;
