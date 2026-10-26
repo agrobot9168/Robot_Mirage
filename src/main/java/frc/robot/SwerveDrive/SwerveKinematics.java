@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.GarraConfig;
+import frc.robot.LimelightHelpers;
 import frc.robot.XboxControls;
 
 public class SwerveKinematics {
@@ -132,8 +133,8 @@ public class SwerveKinematics {
         double zeroYaw = pigeon();
         
         
-        double altTag = 0.40315;
-        double altCam = 0.523;
+        double altTag = 0.385;
+        double altCam = 0.520;
 
         double deltaAlt = altTag - altCam;
         double distance = 0;
@@ -158,6 +159,8 @@ public class SwerveKinematics {
 
         SmartDashboard.putBoolean("Apriltag Detectada", aprilTagYaw.hasTarget());
         SmartDashboard.putNumber("Apriltag TX", aprilTagYaw.getTX());
+        SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY("limelight"));
+        SmartDashboard.putNumber("DISTANCE (m)", Distance());
 
         if(controls.Get_Start()) {
                 zeroYaw = pigeon();
@@ -628,6 +631,31 @@ public class SwerveKinematics {
         // ========================================================
     }
 
+    // DISTÂNCIA 
+
+    double Distance() {
+        
+        double TyCam = LimelightHelpers.getTY("limelight");
+
+        if (!aprilTagYaw.hasTarget()) {
+                 distance = 0; 
+                 return distance;
+        }
+
+double anguloTotal = Math.toRadians(TyCam);
+
+if (Math.abs(Math.tan(anguloTotal))< 0.001){
+        distance = 0; 
+        return distance;
+}
+ 
+distance = deltaAlt / Math.tan(anguloTotal);
+
+distance = 1.0222 * distance - 0.1497;
+
+return distance;
+
+}
     // ============================================================
     // CANcoder → GRAUS
     // ============================================================
@@ -780,7 +808,7 @@ public class SwerveKinematics {
 
 
 //         double Distance() {
-//         double TyCam = LimelightHelpers.getTY("limelight-august");
+//         double TyCam = LimelightHelpers.getTY("limelight");
 //         return distance = deltaAlt / Math.tan(Math.toRadians(TyCam));
 //     }
 //         SmartDashboard.putNumber("DISTANCE", Distance());
