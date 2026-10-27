@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SwerveDrive.ContollerPosition;
+import frc.robot.SwerveDrive.FowardKinematics;
 import frc.robot.SwerveDrive.SwerveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -35,7 +36,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  private final SwerveKinematics swerveAngle = new SwerveKinematics();
+  public final SwerveKinematics swerveAngle = new SwerveKinematics();
+  private final FowardKinematics fowardKinematics = new FowardKinematics();
  // private final SwerveKinematics motorteste = new SwerveKinematics().Garrateste();
 
 
@@ -91,6 +93,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     swerveAngle.periodic();
     swerveAngle.PrintsSwerveKnematics();
+    fowardKinematics.PrintFowardKinematics();
 
   }
 

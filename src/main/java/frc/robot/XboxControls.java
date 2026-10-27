@@ -33,6 +33,10 @@ public class XboxControls {
     public final double Get_RightTriggerAxis(){
         return m_controller.getRightTriggerAxis();
     }
+
+    public final boolean Get_YButton() {
+        return m_controller.getYButtonPressed();
+    }
         
     
 }

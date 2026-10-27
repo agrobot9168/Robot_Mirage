@@ -12,17 +12,14 @@ import frc.robot.GarraConfig;
 import frc.robot.XboxControls;
 
 public class SwerveKinematics {
-private TalonFXS motor = new TalonFXS(14);
 
-        private SparkClosedLoopController controladorFL;
-        private RelativeEncoder encoderFL;
-
-    private SwerveConfig swerveConfig = new SwerveConfig();
+    private final FowardKinematics forward = new FowardKinematics();
+    private static SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
-    private final ContollerPosition contollerPositionFL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFL);
-    private final ContollerPosition contollerPositionFR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFR);
-    private final ContollerPosition contollerPositionBL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBL);
-    private final ContollerPosition contollerPositionBR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBR);
+    public static final ContollerPosition contollerPositionFL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFL);
+    private static final ContollerPosition contollerPositionFR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorFR);
+    private static final ContollerPosition contollerPositionBL = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBL);
+    private static final ContollerPosition contollerPositionBR = new ContollerPosition(swerveConfig, swerveConfig.drive_motorBR);
     
     //private final GarraConfig motor = new GarraConfig();
 
@@ -50,6 +47,7 @@ private TalonFXS motor = new TalonFXS(14);
 
     // Velocidade angular máxima
     private static final double MAX_ANGULAR_SPEED = 1.0;
+    private static final double MAX_WHELL_SPEED_MPS = 4.5;
 
     // ÂNGULOS DESEJADOS
     private double targetAngleFL = 0;
@@ -164,18 +162,18 @@ private TalonFXS motor = new TalonFXS(14);
                 zeroYaw = pigeon();
         }
 
-        if(controls.Get_Abutton()) testes = !testes;
-        if(testes) {
-                contollerPositionFL.setMPSAlternative(4.9);
-                contollerPositionFR.setMPSAlternative(4.9);
-                contollerPositionBL.setMPS(4.9);
-                contollerPositionBR.setMPS(4.9);
-        } else {
-                contollerPositionFL.setMPSAlternative(0);
-                contollerPositionFR.setMPSAlternative(0);
-                contollerPositionBL.setMPS(0);
-                contollerPositionBR.setMPS(0);
-        }
+        // if(controls.Get_Abutton()) testes = !testes;
+        // if(testes) {
+        //         contollerPositionFL.setMPS(4.9);
+        //         contollerPositionFR.setMPS(4.9);
+        //         contollerPositionBL.setMPS(4.9);
+        //         contollerPositionBR.setMPS(4.9);
+        // } else {
+        //         contollerPositionFL.setMPS(0);
+        //         contollerPositionFR.setMPS(0);
+        //         contollerPositionBL.setMPS(0);
+        //         contollerPositionBR.setMPS(0);
+        // }
 
         
 
@@ -193,6 +191,8 @@ private TalonFXS motor = new TalonFXS(14);
         //  * LEFT X  -> VY
         //  * RIGHT X -> OMEGA
         //  */
+        if(controls.Get_YButton()) driveFieldOriented = !driveFieldOriented;
+
                 if(driveFieldOriented){
                 vx =
                 MathUtil.applyDeadband(
@@ -217,6 +217,11 @@ private TalonFXS motor = new TalonFXS(14);
 		vx = velocidades[0];
 		vy = velocidades[1];
 		omega = velocidades[2];
+
+        } else if(!driveFieldOriented) {
+                vx = forward.PID_X();
+                vy = forward.PID_Y();
+                omega = 0.0;
         }
 
         
@@ -505,6 +510,34 @@ private TalonFXS motor = new TalonFXS(14);
         // ========================================================
 	// OTIMIZAÇÃO DOS MÓDULOS + COSINE COMPENSATION
 	// ========================================================
+        if(driveFieldOriented) {
+                speedFL = MathUtil.clamp(speedFL * MAX_WHELL_SPEED_MPS, 
+                                -MAX_WHELL_SPEED_MPS, 
+                                MAX_WHELL_SPEED_MPS);
+                speedFR = MathUtil.clamp(speedFR * MAX_WHELL_SPEED_MPS, 
+                                        -MAX_WHELL_SPEED_MPS, 
+                                        MAX_WHELL_SPEED_MPS);
+                speedBL = MathUtil.clamp(speedBL * MAX_WHELL_SPEED_MPS, 
+                                        -MAX_WHELL_SPEED_MPS, 
+                                        MAX_WHELL_SPEED_MPS);
+                speedBR = MathUtil.clamp(speedBR * MAX_WHELL_SPEED_MPS, 
+                                        -MAX_WHELL_SPEED_MPS, 
+                                        MAX_WHELL_SPEED_MPS);
+        } else if(!driveFieldOriented) {
+                speedFL = MathUtil.clamp(speedFL * 2, 
+                                -2, 
+                                2);
+                speedFR = MathUtil.clamp(speedFR * 2, 
+                                        -2, 
+                                        2);
+                speedBL = MathUtil.clamp(speedBL * 2, 
+                                        -2, 
+                                        2);
+                speedBR = MathUtil.clamp(speedBR * 2, 
+                                        -2, 
+                                        2);
+        }
+        
 
 
         // ========================================================
@@ -623,6 +656,10 @@ private TalonFXS motor = new TalonFXS(14);
         // swerveConfig.drive_motorFR.set(speedFR);
         // swerveConfig.drive_motorBL.set(speedBL);
         // swerveConfig.drive_motorBR.set(speedBR);
+        contollerPositionFL.setMPS(speedFL);
+        contollerPositionFR.setMPS(speedFR);
+        contollerPositionBL.setMPS(speedBL);
+        contollerPositionBR.setMPS(speedBR);
 
 
         // ========================================================
@@ -649,163 +686,213 @@ private TalonFXS motor = new TalonFXS(14);
     // CANcoder → GRAUS
     // ============================================================
 
-    private double getAngle(CANcoder cancoder, double offset) {
-
-        double rotations =
-                cancoder
-                        .getAbsolutePosition()
-                        .getValueAsDouble();
-
-        double degrees =
-                rotations * 360.0;
-
-        degrees -= offset;
-
-        return MathUtil.inputModulus(
-                degrees,
-                0,
-                360
-        );
-    }
-    double pigeon() {
-        return swerveConfig.pigeon2.getYaw().getValueAsDouble();
-    }
-
-    public double[] DriveFieldOriented(double vx, double vy, double omega) {
-
-    // Orientação atual do Pigeon, em graus
-    double yaw = pigeon();
-
-    // Orientação relativa à referência salva ao apertar Start
-    double heading = Math.toRadians(yaw - zeroYaw);
-
-    // Transformação Field-Oriented para Robot-Oriented
-    double robotVx = vx * Math.cos(heading) + vy * Math.sin(heading);
-    double robotVy = -vx * Math.sin(heading) + vy * Math.cos(heading);
-
-    // Retorna: Vx, Vy, omega
-    return new double[] { robotVx, robotVy, omega };
+    private static double getAngle(CANcoder cancoder, double offset) {
+    
+            double rotations =
+                    cancoder
+                            .getAbsolutePosition()
+                            .getValueAsDouble();
+    
+            double degrees =
+                    rotations * 360.0;
+    
+            degrees -= offset;
+    
+            return MathUtil.inputModulus(
+                    degrees,
+                    0,
+                    360
+            );
+        }
+        double pigeon() {
+            return swerveConfig.pigeon2.getYaw().getValueAsDouble();
+        }
+    
+        public double[] DriveFieldOriented(double vx, double vy, double omega) {
+    
+        // Orientação atual do Pigeon, em graus
+        double yaw = pigeon();
+    
+        // Orientação relativa à referência salva ao apertar Start
+        double heading = Math.toRadians(yaw - zeroYaw);
+    
+        // Transformação Field-Oriented para Robot-Oriented
+        double robotVx = vx * Math.cos(heading) + vy * Math.sin(heading);
+        double robotVy = -vx * Math.sin(heading) + vy * Math.cos(heading);
+    
+        // Retorna: Vx, Vy, omega
+        return new double[] { robotVx, robotVy, omega };
+        }
+        
+    
+        public void PrintsSwerveKnematics() {
+            SmartDashboard.putNumber("RPS/FL", contollerPositionFL.getMPS());
+            SmartDashboard.putNumber("RPS/FR", contollerPositionFR.getMPS());
+            SmartDashboard.putNumber("RPS/BL", contollerPositionBL.getMPS());
+            SmartDashboard.putNumber("RPS/BR", contollerPositionBR.getMPS());
+    
+            SmartDashboard.putNumber("Position/Position_FL", contollerPositionFL.GetPosition());
+    
+    
+                            SmartDashboard.putNumber(
+                    "VX",
+                    p_vx
+            );
+    
+            SmartDashboard.putNumber(
+                    "VY",
+                    p_vy
+            );
+    
+            SmartDashboard.putNumber(
+                    "Omega",
+                    p_omega
+            );
+    
+    
+            SmartDashboard.putNumber(
+                    "FL Target Angle",
+                    p_targetAngleFl
+            );
+    
+            SmartDashboard.putNumber(
+                    "FR Target Angle",
+                    p_targetAngleFR
+            );
+    
+            SmartDashboard.putNumber(
+                    "BL Target Angle",
+                    p_targetAngleBL
+            );
+    
+            SmartDashboard.putNumber(
+                    "BR Target Angle",
+                    p_targetAngleBR
+            );
+    
+    
+            SmartDashboard.putNumber(
+                    "FL Speed",
+                    p_speedFL
+            );
+    
+            SmartDashboard.putNumber(
+                    "FR Speed",
+                    p_speedFR
+            );
+    
+            SmartDashboard.putNumber(
+                    "BL Speed",
+                    p_speedBL
+            );
+    
+            SmartDashboard.putNumber(
+                    "BR Speed",
+                    p_speedBR
+            );
+    
+    
+            SmartDashboard.putNumber(
+                    "FL Angle",
+                    p_angleFL
+            );
+    
+            SmartDashboard.putNumber(
+                    "FR Angle",
+                    p_angleFR
+            );
+    
+            SmartDashboard.putNumber(
+                    "BL Angle",
+                    p_angleBL
+            );
+    
+            SmartDashboard.putNumber(
+                    "BR Angle",
+                    p_angleBR
+            );
+    
+    
+            SmartDashboard.putNumber(
+                    "Pigeon2",
+                    swerveConfig.pigeon2
+                            .getYaw()
+                            .getValueAsDouble()
+            );
+    
     }
     
-
-    public void PrintsSwerveKnematics() {
-        SmartDashboard.putNumber("RPS/FL", contollerPositionFL.getMPS());
-        SmartDashboard.putNumber("RPS/FR", contollerPositionFR.getMPS());
-        SmartDashboard.putNumber("RPS/BL", contollerPositionBL.getMPS());
-        SmartDashboard.putNumber("RPS/BR", contollerPositionBR.getMPS());
-
-
-                        SmartDashboard.putNumber(
-                "VX",
-                p_vx
-        );
-
-        SmartDashboard.putNumber(
-                "VY",
-                p_vy
-        );
-
-        SmartDashboard.putNumber(
-                "Omega",
-                p_omega
-        );
-
-
-        SmartDashboard.putNumber(
-                "FL Target Angle",
-                p_targetAngleFl
-        );
-
-        SmartDashboard.putNumber(
-                "FR Target Angle",
-                p_targetAngleFR
-        );
-
-        SmartDashboard.putNumber(
-                "BL Target Angle",
-                p_targetAngleBL
-        );
-
-        SmartDashboard.putNumber(
-                "BR Target Angle",
-                p_targetAngleBR
-        );
-
-
-        SmartDashboard.putNumber(
-                "FL Speed",
-                p_speedFL
-        );
-
-        SmartDashboard.putNumber(
-                "FR Speed",
-                p_speedFR
-        );
-
-        SmartDashboard.putNumber(
-                "BL Speed",
-                p_speedBL
-        );
-
-        SmartDashboard.putNumber(
-                "BR Speed",
-                p_speedBR
-        );
-
-
-        SmartDashboard.putNumber(
-                "FL Angle",
-                p_angleFL
-        );
-
-        SmartDashboard.putNumber(
-                "FR Angle",
-                p_angleFR
-        );
-
-        SmartDashboard.putNumber(
-                "BL Angle",
-                p_angleBL
-        );
-
-        SmartDashboard.putNumber(
-                "BR Angle",
-                p_angleBR
-        );
-
-
-        SmartDashboard.putNumber(
-                "Pigeon2",
-                swerveConfig.pigeon2
-                        .getYaw()
-                        .getValueAsDouble()
-        );
-
-}
-
-//public SwerveKinematics Garrateste() {
-        
-    // if(controls.Get_Abutton()) {
-     // motor.set(0.3);
-    // }
-
-
-     //if(controls.getBButtonPressed()) {
-      // motorGarra.set(-0.8);
+    //public SwerveKinematics Garrateste() {
+            
+        // if(controls.Get_Abutton()) {
+         // motor.set(0.3);
+        // }
+    
+    
+         //if(controls.getBButtonPressed()) {
+          // motorGarra.set(-0.8);
+        //}
+    
+        //else {
+        //  motor.set(0.0);
+      // }
     //}
+    
+    
+    
+    
+    //         double Distance() {
+    //         double TyCam = LimelightHelpers.getTY("limelight-august");
+    //         return distance = deltaAlt / Math.tan(Math.toRadians(TyCam));
+    //     }
+    //         SmartDashboard.putNumber("DISTANCE", Distance());
+    public static double[] DirectKinematics() {
+    
+        // Velocidades reais das rodas (m/s)
+        double vFL = contollerPositionFL.getMPS();
+        double vFR = contollerPositionFR.getMPS();
+        double vBL = contollerPositionBL.getMPS();
+        double vBR = contollerPositionBR.getMPS();
+    
+        // Ângulos reais dos módulos (graus)
+        double aFL = Math.toRadians(
+            getAngle(swerveConfig.canFL, swerveConfig.offsetFL)
+        );
+        double aFR = Math.toRadians(
+            getAngle(swerveConfig.canFR, swerveConfig.offsetFR)
+    );
+    double aBL = Math.toRadians(
+        getAngle(swerveConfig.canBL, swerveConfig.offsetBL)
+    );
+    double aBR = Math.toRadians(
+        getAngle(swerveConfig.canBR, swerveConfig.offsetBR)
+    );
 
-    //else {
-    //  motor.set(0.0);
-  // }
-//}
+    // Componentes de velocidade de cada roda
+    double flVx = vFL * Math.cos(aFL);
+    double flVy = vFL * Math.sin(aFL);
 
+    double frVx = vFR * Math.cos(aFR);
+    double frVy = vFR * Math.sin(aFR);
 
+    double blVx = vBL * Math.cos(aBL);
+    double blVy = vBL * Math.sin(aBL);
 
+    double brVx = vBR * Math.cos(aBR);
+    double brVy = vBR * Math.sin(aBR);
 
-//         double Distance() {
-//         double TyCam = LimelightHelpers.getTY("limelight-august");
-//         return distance = deltaAlt / Math.tan(Math.toRadians(TyCam));
-//     }
-//         SmartDashboard.putNumber("DISTANCE", Distance());
+    // Cinemática direta: velocidade translacional
+    double vx = (flVx + frVx + blVx + brVx) / 4.0;
+    double vy = (flVy + frVy + blVy + brVy) / 4.0;
 
+    // Velocidade angular estimada (rad/s)
+    double omega = (
+          (-flVx + flVy) 
+        + ( frVx + frVy)
+        + (-blVx - blVy)
+        + ( brVx - brVy)
+    ) / (4.0 * (L + W));
+
+    return new double[] { vx, vy, omega };
+}
 }
