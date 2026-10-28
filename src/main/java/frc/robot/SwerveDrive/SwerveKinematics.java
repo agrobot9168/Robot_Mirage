@@ -7,6 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.GarraConfig;
 import frc.robot.XboxControls;
@@ -47,7 +48,7 @@ public class SwerveKinematics {
 
     // Velocidade angular máxima
     private static final double MAX_ANGULAR_SPEED = 1.0;
-    private static final double MAX_WHELL_SPEED_MPS = 4.5;
+    private static double MAX_WHELL_SPEED_MPS = 4.5;
 
     // ÂNGULOS DESEJADOS
     private double targetAngleFL = 0;
@@ -74,6 +75,8 @@ public class SwerveKinematics {
         swerveConfig.pidFR.setTolerance(1.0);
         swerveConfig.pidBL.setTolerance(1.0);
         swerveConfig.pidBR.setTolerance(1.0);
+
+
     }
 
     //OPTIMIZATION AND COMPESATION
@@ -192,7 +195,8 @@ public class SwerveKinematics {
         //  * RIGHT X -> OMEGA
         //  */
         if(controls.Get_YButton()) driveFieldOriented = !driveFieldOriented;
-
+        
+        
                 if(driveFieldOriented){
                 vx =
                 MathUtil.applyDeadband(
@@ -246,6 +250,14 @@ public class SwerveKinematics {
         
 
 
+        //LOST COMUNICATION PROTECTION 
+        if(DriverStation.isDSAttached() && DriverStation.isEnabled()) {
+                vx = 0.0;
+                vy = 0.0;
+                omega = 0.0;
+        }
+        //LOST COMUNICATION PROTECTION 
+
         // ========================================================
         // CINEMATICA SWERVE
         // ========================================================
@@ -272,7 +284,7 @@ public class SwerveKinematics {
         //Invert
         // vx = vx * -1;
         // vy = vy * -1;
-        omega = omega * -1;
+        // omega = omega * -1;
         //Invert
 
 
@@ -511,9 +523,13 @@ public class SwerveKinematics {
 	// OTIMIZAÇÃO DOS MÓDULOS + COSINE COMPENSATION
 	// ========================================================
         if(driveFieldOriented) {
+                MAX_WHELL_SPEED_MPS = 4.5;
+         } else if(!driveFieldOriented) {
+                MAX_WHELL_SPEED_MPS = 1;
+         }
                 speedFL = MathUtil.clamp(speedFL * MAX_WHELL_SPEED_MPS, 
-                                -MAX_WHELL_SPEED_MPS, 
-                                MAX_WHELL_SPEED_MPS);
+                                        -MAX_WHELL_SPEED_MPS, 
+                                        MAX_WHELL_SPEED_MPS);
                 speedFR = MathUtil.clamp(speedFR * MAX_WHELL_SPEED_MPS, 
                                         -MAX_WHELL_SPEED_MPS, 
                                         MAX_WHELL_SPEED_MPS);
@@ -523,20 +539,7 @@ public class SwerveKinematics {
                 speedBR = MathUtil.clamp(speedBR * MAX_WHELL_SPEED_MPS, 
                                         -MAX_WHELL_SPEED_MPS, 
                                         MAX_WHELL_SPEED_MPS);
-        } else if(!driveFieldOriented) {
-                speedFL = MathUtil.clamp(speedFL * 2, 
-                                -2, 
-                                2);
-                speedFR = MathUtil.clamp(speedFR * 2, 
-                                        -2, 
-                                        2);
-                speedBL = MathUtil.clamp(speedBL * 2, 
-                                        -2, 
-                                        2);
-                speedBR = MathUtil.clamp(speedBR * 2, 
-                                        -2, 
-                                        2);
-        }
+        
         
 
 
@@ -612,6 +615,7 @@ public class SwerveKinematics {
         //         )
         // );
 
+
         // swerveConfig.motorFR.setControl(
         //         swerveConfig.outputFR.withOutput(
         //                 outputFRValue
@@ -642,6 +646,8 @@ public class SwerveKinematics {
 
         swerveConfig.motorBR.set(outputBRValue);
 
+        
+
 
 
 
@@ -660,6 +666,10 @@ public class SwerveKinematics {
         contollerPositionFR.setMPS(speedFR);
         contollerPositionBL.setMPS(speedBL);
         contollerPositionBR.setMPS(speedBR);
+
+
+
+        
 
 
         // ========================================================

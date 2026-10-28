@@ -12,6 +12,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class SwerveConfig {
+
+    public final TalonFXS talonFXSy = new TalonFXS(14);
     // =========================
     // Pigeon2.0
     // =========================

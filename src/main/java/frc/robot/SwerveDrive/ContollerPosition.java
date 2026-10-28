@@ -55,6 +55,7 @@ public class ContollerPosition {
     public void setMPS(double mps) {
         double rpm = ((mps / 0.319186) * 6.12 * 60);
         rpm = MathUtil.clamp(rpm, -MAX_RPM, MAX_RPM);
+        
         controlador.setSetpoint(rpm, ControlType.kMAXMotionVelocityControl);
     }
 

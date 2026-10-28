@@ -9,11 +9,11 @@ import frc.robot.SwerveDrive.SwerveKinematics;
 public class FowardKinematics {
 
 private double alt = 0.40315 - 0.523;
-private double mensuredX = 0.8;
-private double mensuredY = 0.1;
+private static final double mensuredX = 0.8;
+private static final double mensuredY = 0.1;
 
-    private PIDController pid_TX = new PIDController(0.07, 0, 0);
-    private PIDController pid_TY = new PIDController(0.07, 0, 0);
+    private PIDController pid_TX = new PIDController(0.1, 0, 0);
+    private PIDController pid_TY = new PIDController(0.1, 0, 0);
 
 
     public FowardKinematics() {
@@ -28,19 +28,19 @@ private double mensuredY = 0.1;
     // }
     public double Erro_Y() {
         double tx = Math.toRadians(LimelightHelpers.getTX("limelight"));
-        return Math.abs(Erro_X() * Math.tan(tx));
+        return Erro_X() * Math.tan(tx);
     }
 
     public double PID_X() {
         if(Erro_X() > mensuredX) {
-            return pid_TX.calculate(mensuredX, Erro_X());
+            return pid_TX.calculate(Erro_X(), mensuredX);
         } else {
             return 0.0;
         }
     }
     public double PID_Y() {
-        if(Erro_X() > Math.abs(mensuredY)) {
-            return pid_TY.calculate(mensuredY, Erro_Y());
+        if(Erro_Y() > Math.abs(mensuredY)) {
+            return pid_TY.calculate(Erro_Y(), mensuredY);
         } else {
             return 0.0;
         }

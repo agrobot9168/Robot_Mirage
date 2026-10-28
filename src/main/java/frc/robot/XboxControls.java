@@ -11,7 +11,7 @@ public class XboxControls {
     }
 
     public final double Get_RightX() {
-        return m_controller.getRightX();
+        return  - m_controller.getRightX();
     }
     public final double Get_LeftX() {
         return m_controller.getLeftX();
