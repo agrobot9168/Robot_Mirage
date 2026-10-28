@@ -1,24 +1,21 @@
 package frc.robot.SwerveDrive;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFXS;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.GarraConfig;
-import frc.robot.LimelightHelpers;
 import frc.robot.XboxControls;
-import frc.robot.LimelightHelpers.LimelightResults;
+
 
 public class SwerveKinematics {
-    private TalonFXS motor = new TalonFXS(14);
+    // private TalonFXS motor = new TalonFXS(14);
 
     private SwerveConfig swerveConfig = new SwerveConfig();
     private final XboxControls controls = new XboxControls();
 
-    private final AprilTagYaw aprilTagYaw = new AprilTagYaw("limelight");
+    private final AutonomoTag autonomoTag = new AutonomoTag();
 
+    //private final AprilTagYaw aprilTagYaw = new AprilTagYaw("limelight");
+    //private static final double PROCURA_OMEGA = 0.20;
     //private final GarraConfig motor = new GarraConfig();
 
     // Posição dos módulos em relação ao centro do robô
@@ -60,6 +57,8 @@ public class SwerveKinematics {
 
     public SwerveKinematics() {
 
+        zeroYaw = pigeon();
+
         // PID CONTINUOUS
         swerveConfig.pidFL.enableContinuousInput(0, 360);
         swerveConfig.pidFR.enableContinuousInput(0, 360);
@@ -80,7 +79,7 @@ public class SwerveKinematics {
         double speed) {
 
     // Se não há movimento significativo, mantém o estado
-    if (speed <= DEADBAND) {
+    if (Math.abs(speed) <= DEADBAND) {
         return new double[] { targetAngle, speed };
     }
 
@@ -123,32 +122,19 @@ public class SwerveKinematics {
 }
     //OPTIMIZATION AND COMPESATION
 
-                //VÁRIAVEIS
-        double vx = 0;
-        double vy = 0;
-        double omega;
+        //VÁRIAVEIS
+        private double vx = 0;
+        private double vy = 0;
+        private double omega = 0;
 
-        boolean giro = false;
-        boolean condition, condition2 = false;
+        private double zeroYaw = 0;
 
-        double zeroYaw = pigeon();
-        
-        
-        double altTag = 0.385;
-        double altCam = 0.520;
+        private boolean alinhamentoApriltag = false;
 
-        double deltaAlt = altTag - altCam;
-        double distance = 0;
+        private boolean driveRobotOriented = false;
+        private boolean driveFieldOriented = true;
+        // VÁRIAVEIS
 
-
-        double distanceDesejada = 0;
-
-        // april tag teste 01 
-        boolean alinhamentoApriltag = false;
-
-        boolean driveRobotOriented = false;
-        boolean driveFieldOriented = true;
-                //VÁRIAVEIS
 
                 //FOR PRINTS
         private double p_vx, p_vy, p_omega, p_targetAngleFl, p_targetAngleFR, p_targetAngleBR, p_targetAngleBL,
@@ -157,11 +143,12 @@ public class SwerveKinematics {
 
     // PERIODIC
     public void periodic() {
-
-        SmartDashboard.putBoolean("Apriltag Detectada", aprilTagYaw.hasTarget());
-        SmartDashboard.putNumber("Apriltag TX", aprilTagYaw.getTX());
-        SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY("limelight"));
-        SmartDashboard.putNumber("DISTANCE (m)", Distance());
+        
+        autonomoTag.dashboard();
+        // SmartDashboard.putBoolean("Apriltag Detectada", autonomoTag.hasTarget());
+        // SmartDashboard.putNumber("Apriltag TX", autonomoTag.getTX());
+        // SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY("limelight"));
+        // SmartDashboard.putNumber("DISTANCE (m)", Distance());
 
 
         if(controls.Get_Start()) {
@@ -187,18 +174,14 @@ public class SwerveKinematics {
                 if(driveFieldOriented) {
 
                 if (alinhamentoApriltag) {
-
-                        if (aprilTagYaw.hasTarget()) {
-                                omega = aprilTagYaw.getOmega();
-                        } else {
-                                omega = 0.0;
-                        }
+                        omega = autonomoTag.getOmega();
+                        
                 } else {
                         omega = MathUtil.applyDeadband(
                                 controls.Get_RightX(), DEADBAND 
                         ) * MAX_ANGULAR_SPEED;
                 }
-
+                
                 vx =
                 MathUtil.applyDeadband(
                         controls.Get_LeftY(),
@@ -617,50 +600,57 @@ public class SwerveKinematics {
 
         // ========================================================
         // FOR DASHBOARD
-        vx = p_vx;
-        vy = p_vy;
-        omega = p_omega;
-        targetAngleFL = p_targetAngleFl;
-        targetAngleFR = p_targetAngleFR;
-        targetAngleBL = p_targetAngleBL;
-        targetAngleBR = p_targetAngleBR;
-        speedFL = p_speedFL;
-        speedFR = p_speedFR;
-        speedBL = p_speedBL;
-        speedBR = p_speedBR;
-        angleFL = p_angleFL;
-        angleFR = p_angleFR;
-        angleBL = p_angleBL;
-        angleBR = p_angleBR;
-        // ========================================================
+       // ========================================================
+
+
+p_vx = vx;
+p_vy = vy;
+p_omega = omega;
+
+p_targetAngleFl = targetAngleFL;
+p_targetAngleFR = targetAngleFR;
+p_targetAngleBL = targetAngleBL;
+p_targetAngleBR = targetAngleBR;
+
+p_speedFL = speedFL;
+p_speedFR = speedFR;
+p_speedBL = speedBL;
+p_speedBR = speedBR;
+
+p_angleFL = angleFL;
+p_angleFR = angleFR;
+p_angleBL = angleBL;
+p_angleBR = angleBR;
+
+// ========================================================
     }
 
-    // DISTÂNCIA 
+//     // PEGA DISTÂNCIA DA LIMELIGHT COM A APRIL TAG
 
-    double Distance() {
+//     double Distance() {
         
-        double TyCam = LimelightHelpers.getTY("limelight");
+//         double TyCam = LimelightHelpers.getTY("limelight");
 
-        if (!aprilTagYaw.hasTarget()) {
-                 distance = 0; 
-                 return distance;
-        }
+//         if (!aprilTagYaw.hasTarget()) {
+//                  distance = 0; 
+//                  return distance;
+//         }
 
-double anguloTotal = Math.toRadians(TyCam);
+// double anguloTotal = Math.toRadians(TyCam);
 
-if (Math.abs(Math.tan(anguloTotal))< 0.001){
-        distance = 0; 
-        return distance;
-}
+// if (Math.abs(Math.tan(anguloTotal))< 0.001){
+//         distance = 0; 
+//         return distance;
+// }
  
-distance = deltaAlt / Math.tan(anguloTotal);
+// distance = deltaAlt / Math.tan(anguloTotal);
  
-// calibracao teste de distancia
-distance = 1.0222 * distance - 0.1497;
+// // calibracao teste de distancia
+// distance = 1.0222 * distance - 0.1497;
 
-return distance;
+// return distance;
 
-}
+// }
     // ============================================================
     // CANcoder → GRAUS
     // ============================================================
