@@ -17,7 +17,7 @@ private static final double mensuredY = 0.1;
 
 
     public FowardKinematics() {
-
+        
     }
     public double Erro_X() {
         double ty = Math.toRadians(LimelightHelpers.getTY("limelight"));
@@ -39,7 +39,7 @@ private static final double mensuredY = 0.1;
         }
     }
     public double PID_Y() {
-        if(Erro_Y() > Math.abs(mensuredY)) {
+        if(Math.abs(Erro_Y()) > mensuredY) {
             return pid_TY.calculate(Erro_Y(), mensuredY);
         } else {
             return 0.0;

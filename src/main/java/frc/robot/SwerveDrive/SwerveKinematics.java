@@ -44,7 +44,7 @@ public class SwerveKinematics {
     // CONFIGURAÇÕES
     // ============================================================
 
-    private static final double DEADBAND = 0.05;
+    private static final double DEADBAND = 0.08;
 
     // Velocidade angular máxima
     private static final double MAX_ANGULAR_SPEED = 1.0;
@@ -251,11 +251,13 @@ public class SwerveKinematics {
 
 
         //LOST COMUNICATION PROTECTION 
-        if(DriverStation.isDSAttached() && DriverStation.isEnabled()) {
+        if(!DriverStation.isDSAttached() && DriverStation.isEnabled()) {
                 vx = 0.0;
                 vy = 0.0;
                 omega = 0.0;
         }
+        SmartDashboard.putBoolean("isDSAttached", DriverStation.isDSAttached());
+        SmartDashboard.putBoolean("isEnabled", DriverStation.isEnabled());
         //LOST COMUNICATION PROTECTION 
 
         // ========================================================
@@ -666,6 +668,10 @@ public class SwerveKinematics {
         contollerPositionFR.setMPS(speedFR);
         contollerPositionBL.setMPS(speedBL);
         contollerPositionBR.setMPS(speedBR);
+
+        vx = 0.0;
+        vy = 0.0;
+        omega = 0.0;
 
 
 

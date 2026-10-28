@@ -5,24 +5,24 @@
 
   public class Garra extends SubsystemBase {
 
-     private final GarraConfig garraConfig = new GarraConfig();
+    //  private final GarraConfig garraConfig = new GarraConfig();
      
-    public void setMotor(double velocidade) {
-    garraConfig.setMotor(velocidade);
-  }
-    public void stopMotor() {
-      garraConfig.stopMotor();
-  }
+  //   public void setMotor(double velocidade) {
+  //   garraConfig.setMotor(velocidade);
+  // }
+  //   public void stopMotor() {
+  //     garraConfig.stopMotor();
+  // }
 
 @Override
 
 public void periodic() {
-  double corrente = garraConfig.getCurrent();
-  double correcao = garraConfig.calcularCorrecaoCorrente();
+  // double corrente = garraConfig.getCurrent();
+  // double correcao = garraConfig.calcularCorrecaoCorrente();
 
-  SmartDashboard.putNumber("CORRECAO",  correcao);
+  // SmartDashboard.putNumber("CORRECAO",  correcao);
 
-  SmartDashboard.putNumber("CORRENTE MOTOR FXS", corrente);
+  // SmartDashboard.putNumber("CORRENTE MOTOR FXS", corrente);
 
     }
   

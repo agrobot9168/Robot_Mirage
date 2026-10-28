@@ -19,42 +19,42 @@ import edu.wpi.first.math.MathUtil;
       //e static final double SAIDA_MAXIMA = 0.15;
 
       public GarraConfig() {
-           motorGarra = new TalonFXS(14);
+          //  motorGarra = new TalonFXS(14);
        
-       TalonFXSConfiguration configs = new TalonFXSConfiguration();
-       configs.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+      //  TalonFXSConfiguration configs = new TalonFXSConfiguration();
+      //  configs.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
 
-       motorGarra.getConfigurator().apply(configs); 
+      //  motorGarra.getConfigurator().apply(configs); 
       }
 
 
-      public void setMotor(double velocidade) {
-           motorGarra.set(velocidade);
-       }
+      // public void setMotor(double velocidade) {
+      //      motorGarra.set(velocidade);
+      //  }
 
-       public void stopMotor() {
-        motorGarra.set(0);
-       }
+      //  public void stopMotor() {
+      //   motorGarra.set(0);
+      //  }
 
-       public double getCurrent() {
-        return motorGarra.getStatorCurrent().getValueAsDouble();
-       }
+      //  public double getCurrent() {
+      //   return motorGarra.getStatorCurrent().getValueAsDouble();
+      //  }
 
-       public double correnteAlvo = 10.;
+       public double correnteAlvo = 10.0;
 
-       public double calcularCorrecaoCorrente() {
+      //  public double calcularCorrecaoCorrente() {
       
-         double correnteAtual = getCurrent();
+      //    double correnteAtual = getCurrent();
 
-         return   pid_FXS.calculate(correnteAtual, correnteAlvo);
-       }
+      //    return   pid_FXS.calculate(correnteAtual, correnteAlvo);
+      //  }
 
-       public double calcularSaidaLimitada() {
+      //  public double calcularSaidaLimitada() {
 
-         double correcao = calcularCorrecaoCorrente();
-         return correcao;
-       //return MathUtil.clamp(correcao, 0, 30);
-       }
+      //    double correcao = calcularCorrecaoCorrente();
+      //    return correcao;
+      //  //return MathUtil.clamp(correcao, 0, 30);
+      //  }
     //==========================
     // CONTROLES
     // =========================

@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  private boolean desable = true;
+
   private final RobotContainer m_robotContainer;
   public final SwerveKinematics swerveAngle = new SwerveKinematics();
   private final FowardKinematics fowardKinematics = new FowardKinematics();
@@ -91,9 +93,16 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    swerveAngle.periodic();
-    swerveAngle.PrintsSwerveKnematics();
-    fowardKinematics.PrintFowardKinematics();
+    if(desable) {
+      swerveAngle.periodic();
+      swerveAngle.PrintsSwerveKnematics();
+      fowardKinematics.PrintFowardKinematics();
+    } else {
+
+    }
+    
+
+
 
   }
 
@@ -164,7 +173,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+        if(controller.getXButtonPressed() && controller.getRightBumperButtonPressed() && 
+       controller.getLeftBumperButtonPressed() && (controller.getRightTriggerAxis() > 0.2)
+       && (controller.getLeftTriggerAxis() > 0.2)) desable = !desable;
 
+       SmartDashboard.putBoolean("DISABLE", desable);
     // if(controller.getRightTriggerAxis() >= 0.2 && controller.getLeftTriggerAxis() < 0.2){
     //   testeIndexerNeo2.set(1);
     //   testeIndexerNeo1.set(-1);

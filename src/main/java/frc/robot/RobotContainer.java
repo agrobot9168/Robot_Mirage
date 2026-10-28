@@ -63,12 +63,12 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.rightTrigger().whileTrue( 
-    Commands.startEnd(
-    () -> garra.setMotor(m_driverController.getRightTriggerAxis()),
-    () -> garra.stopMotor(), garra
-    )
-    );
+    // m_driverController.rightTrigger().whileTrue( 
+    // Commands.startEnd(
+    // () -> garra.setMotor(m_driverController.getRightTriggerAxis()),
+    // () -> garra.stopMotor(), garra
+    // )
+    // );
     // m_driverController.getRightTriggerAxis().whileTrue(new Command(Commands.runOnce(() -> garra.setMotor())));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
